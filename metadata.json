@@ -1,0 +1,7 @@
+{
+  "name": "منصة توليد المحتوى بالذكاء الاصطناعي",
+  "description": "منصة توليد محتوى ذكية (نصوص، صور، فيديو) بتصميم داكن شبيه بـ ChatGPT مع دعم ربط السيرفر و Tunnel URL.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
