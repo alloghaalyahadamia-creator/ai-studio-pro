@@ -1,453 +1,181 @@
-<!doctype html>
-<html lang="ar" dir="rtl" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Studio</title>
-    <meta name="description" content="منصة توليد المحتوى بالذكاء الاصطناعي للنصوص والصور والفيديو." />
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Studio Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            boxShadow: {
-              glow: '0 0 30px rgba(59,130,246,0.25)'
-            },
-            colors: {
-              panel: '#111827',
-              soft: '#1f2937',
-              accent: '#38bdf8'
-            }
-          }
-        }
-      };
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-      html, body { height: 100%; }
-      body {
-        background:
-          radial-gradient(circle at top, rgba(59,130,246,0.16), transparent 35%),
-          linear-gradient(135deg, #0b1220 0%, #111827 35%, #0f172a 100%);
-      }
-      .glass {
-        background: rgba(15, 23, 42, 0.72);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-      }
-      .scrollbar-thin::-webkit-scrollbar { width: 8px; }
-      .scrollbar-thin::-webkit-scrollbar-thumb {
-        background: rgba(148, 163, 184, 0.45);
-        border-radius: 999px;
-      }
-      .hidden-scrollbar::-webkit-scrollbar { display: none; }
+        .conversation-item.active { background-color: #374151; border-right: 3px solid #3B82F6; }
+        .message-user { background-color: #3B82F6; color: white; border-radius: 15px 15px 0 15px; }
+        .message-ai { background-color: #374151; color: #E5E7EB; border-radius: 15px 15px 15px 0; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
     </style>
-  </head>
-  <body class="min-h-screen text-slate-100 antialiased" style="font-family: 'Cairo', 'Inter', sans-serif;">
-    <div class="mx-auto flex min-h-screen max-w-7xl flex-col px-4 py-5 sm:px-6 lg:px-8">
-      <header class="glass sticky top-0 z-20 mb-6 rounded-2xl border border-slate-800/80 px-4 py-3 shadow-glow">
-        <div class="flex items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-cyan-500 text-lg font-bold text-slate-950">AI</div>
-            <div>
-              <p class="text-xs text-slate-400">منصة محتوى ذكية</p>
-              <h1 class="text-xl font-bold">AI Studio</h1>
-            </div>
-          </div>
-
-          <button id="settingsBtn" type="button" class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm font-medium text-slate-200 transition hover:border-sky-500 hover:text-white" aria-label="إعدادات الاتصال">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.065c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.065 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.065c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.065-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.065z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 15.5A3.5 3.5 0 1012 8.5a3.5 3.5 0 000 7z"/>
-            </svg>
-            إعدادات الاتصال
-          </button>
-        </div>
-      </header>
-
-      <main class="grid flex-1 gap-6 lg:grid-cols-[420px_minmax(0,1fr)]">
-        <aside class="glass rounded-3xl border border-slate-800/80 p-4 shadow-2xl">
-          <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-slate-100">النوع</h2>
-            <span id="modeStatus" class="rounded-full border border-sky-500/30 bg-sky-500/10 px-2 py-1 text-[11px] text-sky-300">Text/Code</span>
-          </div>
-
-          <div class="grid grid-cols-3 gap-2 rounded-2xl border border-slate-700 bg-slate-950/60 p-2">
-            <button data-mode="text" class="mode-btn active rounded-xl bg-sky-500/15 px-3 py-3 text-sm font-semibold text-sky-300 ring-1 ring-sky-500/40 transition hover:bg-sky-500/20">نص/كود</button>
-            <button data-mode="image" class="mode-btn rounded-xl px-3 py-3 text-sm font-medium text-slate-300 transition hover:bg-slate-800">صورة</button>
-            <button data-mode="video" class="mode-btn rounded-xl px-3 py-3 text-sm font-medium text-slate-300 transition hover:bg-slate-800">فيديو</button>
-          </div>
-
-          <label class="mt-5 block text-sm text-slate-300">الموجهة</label>
-          <textarea id="promptInput" rows="10" class="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950/70 p-4 text-base text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20" placeholder="اكتب طلبك هنا... مثال: اكتب قصة قصيرة عن رحلة فضائية، أو قم بإنشاء صورة لقطة سينمائية لمنزل حديث على ضفاف البحر"></textarea>
-
-          <div class="mt-4 flex gap-3">
-            <button id="generateBtn" type="button" class="flex-1 rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-500 px-4 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-sky-500/20 transition hover:scale-[1.01] hover:shadow-sky-400/30">
-              إنشاء
+</head>
+<body class="bg-gray-900 text-white min-h-screen font-sans flex overflow-hidden">
+    <aside class="w-72 bg-gray-800 border-l border-gray-700 flex flex-col hidden md:flex">
+        <div class="p-4 border-b border-gray-700">
+            <button onclick="newConversation()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-lg font-bold transition flex items-center justify-center gap-2">
+                <i class="fas fa-plus"></i> محادثة جديدة
             </button>
-            <button id="clearBtn" type="button" class="rounded-2xl border border-slate-700 bg-slate-900/70 px-4 py-3 text-sm font-medium text-slate-300 transition hover:border-slate-500 hover:text-white">
-              مسح
+        </div>
+        <div class="flex-1 overflow-y-auto p-2" id="conversationsList"></div>
+        <div class="p-4 border-t border-gray-700">
+            <button onclick="toggleSettings()" class="text-gray-400 hover:text-white transition flex items-center gap-2 w-full">
+                <i class="fas fa-cog"></i> الإعدادات
             </button>
-          </div>
-
-          <div class="mt-5 rounded-2xl border border-slate-700 bg-slate-900/80 p-3 text-xs text-slate-300">
-            <p class="font-semibold text-slate-100">ملاحظات</p>
-            <ul class="mt-2 space-y-1 leading-6 text-slate-400">
-              <li>• استخدم زر الإعدادات لتسجيل رابط Colab Tunnel.</li>
-              <li>• سيُرسل الطلب إلى نقطة النهاية <span class="font-mono text-sky-300">/generate</span>.</li>
-              <li>• يدعم النصوص والصور والفيديو.</li>
-            </ul>
-          </div>
-        </aside>
-
-        <section class="glass min-h-[520px] rounded-3xl border border-slate-800/80 p-4 shadow-2xl">
-          <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-slate-100">النتائج</h2>
-            <span id="resultBadge" class="rounded-full border border-slate-700 bg-slate-900/80 px-2 py-1 text-[11px] text-slate-300">جاهز</span>
-          </div>
-
-          <div id="results" class="scrollbar-thin hidden-scrollbar h-[calc(100%-50px)] overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
-            <div class="flex h-full min-h-[340px] items-center justify-center rounded-2xl border border-dashed border-slate-700 text-center text-slate-400">
-              <div>
-                <div class="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-slate-800 text-2xl">✨</div>
-                <p class="text-lg font-semibold text-slate-200">لنبدأ بالإبداع</p>
-                <p class="mt-2 text-sm text-slate-400">سيظهر الناتج هنا فور إنشاء المحتوى.</p>
-              </div>
+        </div>
+    </aside>
+    <main class="flex-1 flex flex-col h-screen">
+        <header class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center md:hidden">
+            <h1 class="text-xl font-bold text-blue-400">🚀 AI Studio Pro</h1>
+            <button onclick="toggleSettings()" class="text-gray-400"><i class="fas fa-cog text-xl"></i></button>
+        </header>
+        <div class="flex-1 overflow-y-auto p-4" id="chatContainer">
+            <div id="welcomeMessage" class="text-center mt-20 px-4">
+                <h1 class="text-4xl font-bold text-blue-400 mb-4"> AI Studio Pro</h1>
+                <p class="text-gray-400 mb-8">ابدأ محادثة جديدة أو اختر من المحادثات السابقة</p>
+                <div class="flex gap-4 justify-center flex-wrap max-w-lg mx-auto">
+                    <button onclick="quickStart('text')" class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border border-gray-700 flex-1 min-w-[120px]"><i class="fas fa-pen text-2xl text-blue-400 mb-2 block"></i><p class="text-sm">نص</p></button>
+                    <button onclick="quickStart('image')" class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border border-gray-700 flex-1 min-w-[120px]"><i class="fas fa-image text-2xl text-purple-400 mb-2 block"></i><p class="text-sm">صورة</p></button>
+                    <button onclick="quickStart('code')" class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border border-gray-700 flex-1 min-w-[120px]"><i class="fas fa-code text-2xl text-green-400 mb-2 block"></i><p class="text-sm">كود</p></button>
+                </div>
             </div>
-          </div>
-        </section>
-      </main>
+            <div id="messagesList" class="hidden max-w-3xl mx-auto space-y-4 pb-4"></div>
+        </div>
+        <div class="bg-gray-800 border-t border-gray-700 p-4">
+            <div class="max-w-3xl mx-auto">
+                <div class="flex gap-2 mb-3">
+                    <button onclick="setMode('text')" id="btn-text" class="flex-1 py-2 bg-blue-600 rounded-lg text-sm font-bold transition"> نص</button>
+                    <button onclick="setMode('image')" id="btn-image" class="flex-1 py-2 bg-gray-700 rounded-lg text-sm font-bold transition">🎨 صورة</button>
+                    <button onclick="setMode('code')" id="btn-code" class="flex-1 py-2 bg-gray-700 rounded-lg text-sm font-bold transition">💻 كود</button>
+                </div>
+                <div class="flex gap-2 items-end">
+                    <textarea id="promptInput" rows="2" placeholder="اكتب رسالتك هنا..." class="flex-1 bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 resize-none max-h-32"></textarea>
+                    <button onclick="sendMessage()" id="sendBtn" class="bg-blue-600 hover:bg-blue-500 px-5 py-3 rounded-lg font-bold transition h-[50px]"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div id="settingsModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-gray-800 p-6 rounded-xl max-w-md w-full mx-4 border border-gray-700 shadow-2xl">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-cog text-blue-400"></i> الإعدادات</h2>
+            <label class="block text-sm text-gray-400 mb-2">رابط نفق المعالجة:</label>
+            <input type="text" id="tunnelUrlInput" placeholder="https://xxx.trycloudflare.com" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 mb-4 text-sm text-green-400 focus:outline-none focus:border-blue-500">
+            <div class="flex gap-2">
+                <button onclick="saveSettings()" class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 rounded-lg font-bold">حفظ</button>
+                <button onclick="toggleSettings()" class="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded-lg">إلغاء</button>
+            </div>
+        </div>
     </div>
-
-    <div id="settingsModal" class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
-      <div class="w-full max-w-md rounded-3xl border border-slate-700 bg-[#111827] p-5 shadow-2xl">
-        <div class="mb-4 flex items-center justify-between">
-          <h3 class="text-xl font-bold text-white">إعدادات الاتصال</h3>
-          <button id="closeSettingsBtn" type="button" class="rounded-full bg-slate-800 p-2 text-slate-300 transition hover:text-white">✕</button>
-        </div>
-
-        <label class="block text-sm text-slate-300">رابط Colab Tunnel</label>
-        <input id="tunnelInput" type="url" class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-sky-500" placeholder="https://your-tunnel-url.ngrok-free.app" />
-
-        <div class="mt-4 rounded-xl border border-sky-500/30 bg-sky-500/10 p-3 text-xs leading-6 text-sky-100">
-          سيتم حفظ الرابط محليًا في المتصفح ثم إرساله إلى: <span class="font-mono text-sky-300">${tunnelUrl}/generate</span>
-        </div>
-
-        <div class="mt-5 flex justify-end gap-3">
-          <button id="cancelSettingsBtn" type="button" class="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-200">إلغاء</button>
-          <button id="saveSettingsBtn" type="button" class="rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-4 py-2 text-sm font-bold text-slate-950">حفظ</button>
-        </div>
-      </div>
-    </div>
-
     <script>
-      const STORAGE_KEY = 'ai-studio-tunnel-url';
-      const modeButtons = [...document.querySelectorAll('.mode-btn')];
-      const modeStatus = document.getElementById('modeStatus');
-      const generateBtn = document.getElementById('generateBtn');
-      const clearBtn = document.getElementById('clearBtn');
-      const resultsEl = document.getElementById('results');
-      const promptInput = document.getElementById('promptInput');
-      const tunnelInput = document.getElementById('tunnelInput');
-      const settingsModal = document.getElementById('settingsModal');
-      const resultBadge = document.getElementById('resultBadge');
+        let currentMode = 'text';
+        let currentConversationId = null;
+        let conversations = JSON.parse(localStorage.getItem('conversations') || '{}');
+        let tunnelUrl = localStorage.getItem('tunnelUrl') || '';
+        let conversationHistory = [];
 
-      let selectedMode = 'text';
+        window.onload = function() {
+            if (tunnelUrl) document.getElementById('tunnelUrlInput').value = tunnelUrl;
+            renderConversationsList();
+            if (currentConversationId) loadConversation(currentConversationId);
+        };
 
-      function normalizeModeLabel(mode) {
-        if (mode === 'text') return 'Text/Code';
-        if (mode === 'image') return 'Image';
-        return 'Video';
-      }
-
-      function applyMode(mode) {
-        selectedMode = mode;
-        modeButtons.forEach((button) => {
-          const active = button.dataset.mode === mode;
-          button.classList.toggle('active', active);
-          button.classList.toggle('bg-sky-500/15', active);
-          button.classList.toggle('text-sky-300', active);
-          button.classList.toggle('ring-1', active);
-          button.classList.toggle('ring-sky-500/40', active);
-          button.classList.toggle('text-slate-300', !active);
-          button.classList.toggle('bg-slate-800', !active && !active);
-          button.classList.toggle('bg-slate-950/60', !active);
-          button.classList.toggle('font-semibold', active);
-          button.classList.toggle('font-medium', !active);
-        });
-        modeStatus.textContent = normalizeModeLabel(mode);
-      }
-
-      function showSettingsModal(show = true) {
-        settingsModal.classList.toggle('hidden', !show);
-        settingsModal.classList.toggle('flex', show);
-      }
-
-      function getSavedTunnelUrl() {
-        return localStorage.getItem(STORAGE_KEY) || '';
-      }
-
-      function saveTunnelUrl() {
-        const value = tunnelInput.value.trim();
-        if (!value) {
-          localStorage.removeItem(STORAGE_KEY);
-          return;
+        function toggleSettings() { document.getElementById('settingsModal').classList.toggle('hidden'); }
+        function saveSettings() {
+            const url = document.getElementById('tunnelUrlInput').value.trim();
+            if (url) { localStorage.setItem('tunnelUrl', url); tunnelUrl = url; alert('✅ تم الحفظ'); toggleSettings(); }
         }
-        localStorage.setItem(STORAGE_KEY, value);
-      }
-
-      function setTunnelInputValue() {
-        tunnelInput.value = getSavedTunnelUrl();
-      }
-
-      function renderEmptyState() {
-        resultsEl.innerHTML = `
-          <div class="flex h-full min-h-[340px] items-center justify-center rounded-2xl border border-dashed border-slate-700 text-center text-slate-400">
-            <div>
-              <div class="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-slate-800 text-2xl">✨</div>
-              <p class="text-lg font-semibold text-slate-200">لنبدأ بالإبداع</p>
-              <p class="mt-2 text-sm text-slate-400">سيظهر الناتج هنا فور إنشاء المحتوى.</p>
-            </div>
-          </div>
-        `;
-      }
-
-      function setLoading(isLoading) {
-        generateBtn.disabled = isLoading;
-        generateBtn.classList.toggle('opacity-70', isLoading);
-        generateBtn.textContent = isLoading ? 'جارِ الإنشاء...' : 'إنشاء';
-        resultBadge.textContent = isLoading ? 'جارٍ...' : 'جاهز';
-        resultBadge.classList.toggle('text-amber-300', isLoading);
-        resultBadge.classList.toggle('border-amber-500/50', isLoading);
-        resultBadge.classList.toggle('bg-amber-500/10', isLoading);
-      }
-
-      function getMediaTypeFromPayload(payload) {
-        if (payload && typeof payload === 'object') {
-          if (payload.type) return payload.type.toLowerCase();
-          if (payload.kind) return payload.kind.toLowerCase();
-          if (payload.outputType) return payload.outputType.toLowerCase();
+        function setMode(mode) {
+            currentMode = mode;
+            ['text', 'image', 'code'].forEach(m => {
+                document.getElementById(`btn-${m}`).className = m === mode ? 'flex-1 py-2 bg-blue-600 rounded-lg text-sm font-bold transition' : 'flex-1 py-2 bg-gray-700 rounded-lg text-sm font-bold transition';
+            });
         }
-        return null;
-      }
-
-      function extractResultPayload(data) {
-        if (!data) return null;
-
-        if (typeof data === 'string') return { type: 'text', content: data };
-
-        if (Array.isArray(data)) {
-          if (data.length === 0) return null;
-          return extractResultPayload(data[0]);
+        function newConversation() {
+            currentConversationId = 'conv_' + Date.now();
+            conversationHistory = [];
+            conversations[currentConversationId] = { id: currentConversationId, title: 'محادثة جديدة', messages: [], timestamp: new Date().toISOString() };
+            saveConversations(); renderConversationsList();
+            document.getElementById('welcomeMessage').classList.remove('hidden');
+            document.getElementById('messagesList').classList.add('hidden');
+            document.getElementById('messagesList').innerHTML = '';
         }
-
-        if (typeof data === 'object') {
-          const keys = ['result', 'output', 'data', 'content', 'response', 'image', 'video', 'url'];
-          for (const key of keys) {
-            if (data[key] !== undefined) {
-              const nested = extractResultPayload(data[key]);
-              if (nested) return nested;
-            }
-          }
-
-          if (data.text || data.message || data.answer || data.promptResponse) {
-            return { type: 'text', content: data.text || data.message || data.answer || data.promptResponse };
-          }
-
-          if (data.imageUrl || data.image || data.img || data.url) {
-            return { type: 'image', content: data.imageUrl || data.image || data.img || data.url };
-          }
-
-          if (data.videoUrl || data.video || data.fileUrl || data.mp4) {
-            return { type: 'video', content: data.videoUrl || data.video || data.fileUrl || data.mp4 };
-          }
-
-          return { type: 'text', content: JSON.stringify(data, null, 2) };
+        function saveConversations() { localStorage.setItem('conversations', JSON.stringify(conversations)); }
+        function renderConversationsList() {
+            const list = document.getElementById('conversationsList');
+            list.innerHTML = '';
+            Object.values(conversations).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(conv => {
+                const div = document.createElement('div');
+                div.className = `conversation-item p-3 rounded-lg cursor-pointer hover:bg-gray-700 transition mb-2 ${conv.id === currentConversationId ? 'active' : ''}`;
+                div.innerHTML = `<div class="font-bold text-sm truncate">${conv.title}</div><div class="text-xs text-gray-400 mt-1">${new Date(conv.timestamp).toLocaleDateString('ar-SA')}</div>`;
+                div.onclick = () => loadConversation(conv.id);
+                list.appendChild(div);
+            });
         }
-
-        return null;
-      }
-
-      function renderMediaCard(title, mediaUrl, mediaType) {
-        const isImage = mediaType === 'image';
-        const isVideo = mediaType === 'video';
-
-        if (isImage) {
-          return `
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-3">
-              <div class="mb-3 flex items-center justify-between">
-                <h3 class="text-base font-semibold text-white">${title}</h3>
-                <span class="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-300">صورة</span>
-              </div>
-              <img src="${mediaUrl}" alt="${title}" class="w-full rounded-xl border border-slate-700 object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML += '<div class=\'mt-3 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200\'>تعذر تحميل الصورة. تحقق من الرابط.</div>'" />
-            </div>
-          `;
+        function loadConversation(convId) {
+            currentConversationId = convId;
+            const conv = conversations[convId];
+            conversationHistory = conv.messages || [];
+            document.getElementById('welcomeMessage').classList.add('hidden');
+            document.getElementById('messagesList').classList.remove('hidden');
+            document.getElementById('messagesList').innerHTML = '';
+            conv.messages.forEach(msg => addMessageToUI(msg.role, msg.content, false));
+            renderConversationsList();
         }
-
-        if (isVideo) {
-          return `
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-3">
-              <div class="mb-3 flex items-center justify-between">
-                <h3 class="text-base font-semibold text-white">${title}</h3>
-                <span class="rounded-full border border-violet-500/40 bg-violet-500/10 px-2 py-1 text-[11px] text-violet-300">فيديو</span>
-              </div>
-              <video controls class="w-full rounded-xl border border-slate-700 bg-black" src="${mediaUrl}"></video>
-            </div>
-          `;
-        }
-
-        return '';
-      }
-
-      function renderResultCard(title, content) {
-        return `
-          <div class="mb-4 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-            <div class="mb-3 flex items-center justify-between">
-              <h3 class="text-base font-semibold text-white">${title}</h3>
-              <span class="rounded-full border border-sky-500/40 bg-sky-500/10 px-2 py-1 text-[11px] text-sky-300">نص</span>
-            </div>
-            <div class="whitespace-pre-wrap break-words text-sm leading-8 text-slate-200">${content}</div>
-          </div>
-        `;
-      }
-
-      function renderErrorCard(message) {
-        return `
-          <div class="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm leading-7 text-red-100">
-            <div class="mb-2 flex items-center justify-between">
-              <span class="font-semibold">حدث خطأ</span>
-              <span class="rounded-full border border-red-500/40 bg-red-500/20 px-2 py-1 text-[11px]">Error</span>
-            </div>
-            <p>${message}</p>
-          </div>
-        `;
-      }
-
-      async function sendRequest() {
-        const tunnelUrl = getSavedTunnelUrl();
-        const prompt = promptInput.value.trim();
-
-        if (!tunnelUrl) {
-          resultsEl.innerHTML = renderErrorCard('يرجى إدخال رابط Colab Tunnel أولاً من زر الإعدادات.');
-          showSettingsModal(true);
-          return;
-        }
-
-        if (!prompt) {
-          resultsEl.innerHTML = renderErrorCard('يرجى كتابة نص الموجه أولاً.');
-          promptInput.focus();
-          return;
-        }
-
-        setLoading(true);
-        resultBadge.textContent = 'جارٍ الإرسال';
-
-        try {
-          const response = await fetch(`${tunnelUrl.replace(/\/$/, '')}/generate`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-              mode: selectedMode,
-              prompt,
-              text: prompt
-            })
-          });
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || `فشل الاتصال (${response.status})`);
-          }
-
-          const contentType = response.headers.get('content-type') || '';
-          let payload = null;
-
-          if (contentType.includes('application/json')) {
-            payload = await response.json();
-          } else {
-            payload = await response.text();
-          }
-
-          const normalized = extractResultPayload(payload);
-          const mediaType = getMediaTypeFromPayload(payload) || normalized?.type || selectedMode;
-
-          let html = '';
-
-          if (selectedMode === 'image' || mediaType === 'image') {
-            const mediaUrl = normalized?.content || payload?.imageUrl || payload?.image || payload?.url;
-            if (mediaUrl) {
-              html = renderMediaCard('نتيجة الصورة', mediaUrl, 'image');
+        function addMessageToUI(role, content, save = true) {
+            const messagesList = document.getElementById('messagesList');
+            const div = document.createElement('div');
+            div.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+            const bubble = document.createElement('div');
+            bubble.className = `message-${role === 'user' ? 'user' : 'ai'} p-4 max-w-[85%] shadow-md`;
+            if (content.startsWith('data:image/png;base64,')) {
+                bubble.innerHTML = `<img src="${content}" class="max-w-full rounded-lg">`;
             } else {
-              html = renderErrorCard('لم يتم العثور على رابط صورة في الاستجابة.');
+                bubble.innerHTML = `<p class="whitespace-pre-wrap leading-relaxed">${content}</p>`;
             }
-          } else if (selectedMode === 'video' || mediaType === 'video') {
-            const mediaUrl = normalized?.content || payload?.videoUrl || payload?.video || payload?.fileUrl || payload?.mp4;
-            if (mediaUrl) {
-              html = renderMediaCard('نتيجة الفيديو', mediaUrl, 'video');
-            } else {
-              html = renderErrorCard('لم يتم العثور على رابط فيديو في الاستجابة.');
+            div.appendChild(bubble);
+            messagesList.appendChild(div);
+            messagesList.scrollTop = messagesList.scrollHeight;
+            if (save && currentConversationId) {
+                conversations[currentConversationId].messages.push({ role, content });
+                conversations[currentConversationId].timestamp = new Date().toISOString();
+                if (conversations[currentConversationId].title === 'محادثة جديدة' && role === 'user') {
+                    conversations[currentConversationId].title = content.substring(0, 25) + '...';
+                }
+                saveConversations(); renderConversationsList();
             }
-          } else {
-            const textContent = normalized?.content || (typeof payload === 'string' ? payload : JSON.stringify(payload, null, 2));
-            html = renderResultCard('نتيجة النص', textContent);
-          }
-
-          resultsEl.innerHTML = html;
-          resultBadge.textContent = 'مكتمل';
-          resultBadge.classList.remove('text-amber-300', 'border-amber-500/50', 'bg-amber-500/10');
-          resultBadge.classList.add('text-emerald-300', 'border-emerald-500/40', 'bg-emerald-500/10');
-        } catch (error) {
-          resultsEl.innerHTML = renderErrorCard(error.message || 'تعذر إكمال الطلب.');
-          resultBadge.textContent = 'خطأ';
-          resultBadge.classList.remove('text-amber-300', 'border-amber-500/50', 'bg-amber-500/10');
-          resultBadge.classList.add('text-red-300', 'border-red-500/40', 'bg-red-500/10');
-        } finally {
-          setLoading(false);
         }
-      }
-
-      modeButtons.forEach((button) => {
-        button.addEventListener('click', () => applyMode(button.dataset.mode));
-      });
-
-      generateBtn.addEventListener('click', sendRequest);
-      clearBtn.addEventListener('click', () => {
-        promptInput.value = '';
-        promptInput.focus();
-        renderEmptyState();
-        resultBadge.textContent = 'جاهز';
-        resultBadge.classList.remove('text-red-300', 'border-red-500/40', 'bg-red-500/10', 'text-emerald-300', 'border-emerald-500/40', 'bg-emerald-500/10', 'text-amber-300', 'border-amber-500/50', 'bg-amber-500/10');
-        resultBadge.classList.add('text-slate-300', 'border-slate-700', 'bg-slate-900/80');
-      });
-
-      document.getElementById('settingsBtn').addEventListener('click', () => showSettingsModal(true));
-      document.getElementById('closeSettingsBtn').addEventListener('click', () => showSettingsModal(false));
-      document.getElementById('cancelSettingsBtn').addEventListener('click', () => showSettingsModal(false));
-      document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-        saveTunnelUrl();
-        setTunnelInputValue();
-        showSettingsModal(false);
-      });
-
-      tunnelInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          saveTunnelUrl();
-          showSettingsModal(false);
+        async function sendMessage() {
+            const promptInput = document.getElementById('promptInput');
+            const prompt = promptInput.value.trim();
+            const sendBtn = document.getElementById('sendBtn');
+            if (!prompt) return;
+            if (!tunnelUrl) { alert('⚙️ أدخل رابط النفق من الإعدادات'); toggleSettings(); return; }
+            document.getElementById('welcomeMessage').classList.add('hidden');
+            document.getElementById('messagesList').classList.remove('hidden');
+            if (!currentConversationId) newConversation();
+            addMessageToUI('user', prompt);
+            promptInput.value = '';
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'flex justify-start';
+            loadingDiv.innerHTML = `<div class="message-ai p-4 rounded-lg"><i class="fas fa-spinner fa-spin ml-2"></i> جاري التوليد...</div>`;
+            document.getElementById('messagesList').appendChild(loadingDiv);
+            sendBtn.disabled = true; sendBtn.classList.add('opacity-50');
+            try {
+                const response = await fetch(`${tunnelUrl}/generate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, mode: currentMode, conversation_history: conversationHistory }) });
+                const data = await response.json();
+                loadingDiv.remove();
+                if (currentMode === 'image' && data.url) addMessageToUI('assistant', data.url);
+                else addMessageToUI('assistant', data.result || data.text || 'لا توجد نتيجة');
+            } catch (error) { loadingDiv.remove(); addMessageToUI('assistant', `❌ خطأ: ${error.message}`); }
+            finally { sendBtn.disabled = false; sendBtn.classList.remove('opacity-50'); }
         }
-      });
-
-      settingsModal.addEventListener('click', (event) => {
-        if (event.target === settingsModal) {
-          showSettingsModal(false);
-        }
-      });
-
-      setTunnelInputValue();
-      applyMode(selectedMode);
-      renderEmptyState();
+        function quickStart(mode) { setMode(mode); document.getElementById('promptInput').focus(); }
+        document.getElementById('promptInput').addEventListener('input', function() { this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'; });
     </script>
-  </body>
+</body>
 </html>
-
