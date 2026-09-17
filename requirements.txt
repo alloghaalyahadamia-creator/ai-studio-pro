@@ -1,5 +1,7 @@
-gradio
+fastapi
+uvicorn
 transformers
 diffusers
 torch
 accelerate
+pydantic

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Studio Pro</title>
+    <title>AI Studio Pro - منصة الذكاء الاصطناعي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -16,166 +16,216 @@
     </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen font-sans flex overflow-hidden">
+
     <aside class="w-72 bg-gray-800 border-l border-gray-700 flex flex-col hidden md:flex">
         <div class="p-4 border-b border-gray-700">
             <button onclick="newConversation()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-lg font-bold transition flex items-center justify-center gap-2">
                 <i class="fas fa-plus"></i> محادثة جديدة
             </button>
         </div>
+
         <div class="flex-1 overflow-y-auto p-2" id="conversationsList"></div>
-        <div class="p-4 border-t border-gray-700">
-            <button onclick="toggleSettings()" class="text-gray-400 hover:text-white transition flex items-center gap-2 w-full">
-                <i class="fas fa-cog"></i> الإعدادات
-            </button>
-        </div>
     </aside>
+
     <main class="flex-1 flex flex-col h-screen">
         <header class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center md:hidden">
             <h1 class="text-xl font-bold text-blue-400">🚀 AI Studio Pro</h1>
-            <button onclick="toggleSettings()" class="text-gray-400"><i class="fas fa-cog text-xl"></i></button>
         </header>
+
         <div class="flex-1 overflow-y-auto p-4" id="chatContainer">
             <div id="welcomeMessage" class="text-center mt-20 px-4">
-                <h1 class="text-4xl font-bold text-blue-400 mb-4"> AI Studio Pro</h1>
+                <h1 class="text-4xl font-bold text-blue-400 mb-4">🚀 AI Studio Pro</h1>
                 <p class="text-gray-400 mb-8">ابدأ محادثة جديدة أو اختر من المحادثات السابقة</p>
+
                 <div class="flex gap-4 justify-center flex-wrap max-w-lg mx-auto">
-                    <button onclick="quickStart('text')" class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border border-gray-700 flex-1 min-w-[120px]"><i class="fas fa-pen text-2xl text-blue-400 mb-2 block"></i><p class="text-sm">نص</p></button>
-                    <button onclick="quickStart('image')" class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border border-gray-700 flex-1 min-w-[120px]"><i class="fas fa-image text-2xl text-purple-400 mb-2 block"></i><p class="text-sm">صورة</p></button>
-                    <button onclick="quickStart('code')" class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border border-gray-700 flex-1 min-w-[120px]"><i class="fas fa-code text-2xl text-green-400 mb-2 block"></i><p class="text-sm">كود</p></button>
+                    <button onclick="quickStart('text')" class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border border-gray-700 flex-1 min-w-[120px]">
+                        <i class="fas fa-pen text-2xl text-blue-400 mb-2 block"></i>
+                        <p class="text-sm">نص</p>
+                    </button>
+                    <button onclick="quickStart('image')" class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border border-gray-700 flex-1 min-w-[120px]">
+                        <i class="fas fa-image text-2xl text-purple-400 mb-2 block"></i>
+                        <p class="text-sm">صورة</p>
+                    </button>
+                    <button onclick="quickStart('code')" class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg border border-gray-700 flex-1 min-w-[120px]">
+                        <i class="fas fa-code text-2xl text-green-400 mb-2 block"></i>
+                        <p class="text-sm">كود</p>
+                    </button>
                 </div>
             </div>
+
             <div id="messagesList" class="hidden max-w-3xl mx-auto space-y-4 pb-4"></div>
         </div>
+
         <div class="bg-gray-800 border-t border-gray-700 p-4">
             <div class="max-w-3xl mx-auto">
                 <div class="flex gap-2 mb-3">
-                    <button onclick="setMode('text')" id="btn-text" class="flex-1 py-2 bg-blue-600 rounded-lg text-sm font-bold transition"> نص</button>
+                    <button onclick="setMode('text')" id="btn-text" class="flex-1 py-2 bg-blue-600 rounded-lg text-sm font-bold transition">📝 نص</button>
                     <button onclick="setMode('image')" id="btn-image" class="flex-1 py-2 bg-gray-700 rounded-lg text-sm font-bold transition">🎨 صورة</button>
                     <button onclick="setMode('code')" id="btn-code" class="flex-1 py-2 bg-gray-700 rounded-lg text-sm font-bold transition">💻 كود</button>
                 </div>
+
                 <div class="flex gap-2 items-end">
-                    <textarea id="promptInput" rows="2" placeholder="اكتب رسالتك هنا..." class="flex-1 bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 resize-none max-h-32"></textarea>
-                    <button onclick="sendMessage()" id="sendBtn" class="bg-blue-600 hover:bg-blue-500 px-5 py-3 rounded-lg font-bold transition h-[50px]"><i class="fas fa-paper-plane"></i></button>
+                    <textarea id="promptInput" rows="2" placeholder="اكتب رسالتك هنا..."
+                              class="flex-1 bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 resize-none max-h-32"></textarea>
+                    <button onclick="sendMessage()" id="sendBtn" class="bg-blue-600 hover:bg-blue-500 px-5 py-3 rounded-lg font-bold transition h-[50px]">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </main>
-    <div id="settingsModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 backdrop-blur-sm">
-        <div class="bg-gray-800 p-6 rounded-xl max-w-md w-full mx-4 border border-gray-700 shadow-2xl">
-            <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-cog text-blue-400"></i> الإعدادات</h2>
-            <label class="block text-sm text-gray-400 mb-2">رابط نفق المعالجة:</label>
-            <input type="text" id="tunnelUrlInput" placeholder="https://xxx.trycloudflare.com" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 mb-4 text-sm text-green-400 focus:outline-none focus:border-blue-500">
-            <div class="flex gap-2">
-                <button onclick="saveSettings()" class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 rounded-lg font-bold">حفظ</button>
-                <button onclick="toggleSettings()" class="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded-lg">إلغاء</button>
-            </div>
-        </div>
-    </div>
+
     <script>
         let currentMode = 'text';
         let currentConversationId = null;
         let conversations = JSON.parse(localStorage.getItem('conversations') || '{}');
-        let tunnelUrl = localStorage.getItem('tunnelUrl') || '';
         let conversationHistory = [];
 
         window.onload = function() {
-            if (tunnelUrl) document.getElementById('tunnelUrlInput').value = tunnelUrl;
             renderConversationsList();
             if (currentConversationId) loadConversation(currentConversationId);
         };
 
-        function toggleSettings() { document.getElementById('settingsModal').classList.toggle('hidden'); }
-        function saveSettings() {
-            const url = document.getElementById('tunnelUrlInput').value.trim();
-            if (url) { localStorage.setItem('tunnelUrl', url); tunnelUrl = url; alert('✅ تم الحفظ'); toggleSettings(); }
-        }
         function setMode(mode) {
             currentMode = mode;
             ['text', 'image', 'code'].forEach(m => {
-                document.getElementById(`btn-${m}`).className = m === mode ? 'flex-1 py-2 bg-blue-600 rounded-lg text-sm font-bold transition' : 'flex-1 py-2 bg-gray-700 rounded-lg text-sm font-bold transition';
+                const btn = document.getElementById(`btn-${m}`);
+                btn.className = m === mode
+                    ? 'flex-1 py-2 bg-blue-600 rounded-lg text-sm font-bold transition'
+                    : 'flex-1 py-2 bg-gray-700 rounded-lg text-sm font-bold transition';
             });
         }
+
         function newConversation() {
             currentConversationId = 'conv_' + Date.now();
             conversationHistory = [];
-            conversations[currentConversationId] = { id: currentConversationId, title: 'محادثة جديدة', messages: [], timestamp: new Date().toISOString() };
-            saveConversations(); renderConversationsList();
+            conversations[currentConversationId] = {
+                id: currentConversationId,
+                title: 'محادثة جديدة',
+                messages: [],
+                timestamp: new Date().toISOString()
+            };
+            saveConversations();
+            renderConversationsList();
             document.getElementById('welcomeMessage').classList.remove('hidden');
             document.getElementById('messagesList').classList.add('hidden');
             document.getElementById('messagesList').innerHTML = '';
         }
+
         function saveConversations() { localStorage.setItem('conversations', JSON.stringify(conversations)); }
+
         function renderConversationsList() {
             const list = document.getElementById('conversationsList');
             list.innerHTML = '';
             Object.values(conversations).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(conv => {
                 const div = document.createElement('div');
                 div.className = `conversation-item p-3 rounded-lg cursor-pointer hover:bg-gray-700 transition mb-2 ${conv.id === currentConversationId ? 'active' : ''}`;
-                div.innerHTML = `<div class="font-bold text-sm truncate">${conv.title}</div><div class="text-xs text-gray-400 mt-1">${new Date(conv.timestamp).toLocaleDateString('ar-SA')}</div>`;
+                div.innerHTML = `
+                    <div class="font-bold text-sm truncate">${conv.title}</div>
+                    <div class="text-xs text-gray-400 mt-1">${new Date(conv.timestamp).toLocaleDateString('ar-SA')}</div>
+                `;
                 div.onclick = () => loadConversation(conv.id);
                 list.appendChild(div);
             });
         }
+
         function loadConversation(convId) {
             currentConversationId = convId;
             const conv = conversations[convId];
             conversationHistory = conv.messages || [];
+
             document.getElementById('welcomeMessage').classList.add('hidden');
             document.getElementById('messagesList').classList.remove('hidden');
             document.getElementById('messagesList').innerHTML = '';
-            conv.messages.forEach(msg => addMessageToUI(msg.role, msg.content, false));
+
+            conv.messages.forEach(msg => {
+                addMessageToUI(msg.role, msg.content, false);
+            });
             renderConversationsList();
         }
+
         function addMessageToUI(role, content, save = true) {
             const messagesList = document.getElementById('messagesList');
             const div = document.createElement('div');
             div.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+
             const bubble = document.createElement('div');
             bubble.className = `message-${role === 'user' ? 'user' : 'ai'} p-4 max-w-[85%] shadow-md`;
-            if (content.startsWith('data:image/png;base64,')) {
+
+            if (content.startsWith('data:image/') || content.startsWith('http') || content.includes('/prompt/')) {
                 bubble.innerHTML = `<img src="${content}" class="max-w-full rounded-lg">`;
             } else {
                 bubble.innerHTML = `<p class="whitespace-pre-wrap leading-relaxed">${content}</p>`;
             }
+
             div.appendChild(bubble);
             messagesList.appendChild(div);
             messagesList.scrollTop = messagesList.scrollHeight;
+
             if (save && currentConversationId) {
                 conversations[currentConversationId].messages.push({ role, content });
                 conversations[currentConversationId].timestamp = new Date().toISOString();
                 if (conversations[currentConversationId].title === 'محادثة جديدة' && role === 'user') {
                     conversations[currentConversationId].title = content.substring(0, 25) + '...';
                 }
-                saveConversations(); renderConversationsList();
+                saveConversations();
+                renderConversationsList();
             }
         }
+
         async function sendMessage() {
             const promptInput = document.getElementById('promptInput');
             const prompt = promptInput.value.trim();
             const sendBtn = document.getElementById('sendBtn');
+
             if (!prompt) return;
-            if (!tunnelUrl) { alert('⚙️ أدخل رابط النفق من الإعدادات'); toggleSettings(); return; }
+
             document.getElementById('welcomeMessage').classList.add('hidden');
             document.getElementById('messagesList').classList.remove('hidden');
+
             if (!currentConversationId) newConversation();
+
             addMessageToUI('user', prompt);
             promptInput.value = '';
+            promptInput.style.height = 'auto';
+
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'flex justify-start';
             loadingDiv.innerHTML = `<div class="message-ai p-4 rounded-lg"><i class="fas fa-spinner fa-spin ml-2"></i> جاري التوليد...</div>`;
             document.getElementById('messagesList').appendChild(loadingDiv);
-            sendBtn.disabled = true; sendBtn.classList.add('opacity-50');
+
+            sendBtn.disabled = true;
+            sendBtn.classList.add('opacity-50');
+
             try {
-                const response = await fetch(`${tunnelUrl}/generate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, mode: currentMode, conversation_history: conversationHistory }) });
-                const data = await response.json();
+                if (currentMode === 'image') {
+                    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&seed=${Math.random()}`;
+                    loadingDiv.remove();
+                    addMessageToUI('assistant', imageUrl);
+                } else {
+                    const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    const text = await response.text();
+                    loadingDiv.remove();
+                    addMessageToUI('assistant', (text || '').trim() || 'لا توجد نتيجة');
+                }
+            } catch (error) {
                 loadingDiv.remove();
-                if (currentMode === 'image' && data.url) addMessageToUI('assistant', data.url);
-                else addMessageToUI('assistant', data.result || data.text || 'لا توجد نتيجة');
-            } catch (error) { loadingDiv.remove(); addMessageToUI('assistant', `❌ خطأ: ${error.message}`); }
-            finally { sendBtn.disabled = false; sendBtn.classList.remove('opacity-50'); }
+                addMessageToUI('assistant', `❌ خطأ في الاتصال: ${error.message}`);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('opacity-50');
+            }
         }
+
         function quickStart(mode) { setMode(mode); document.getElementById('promptInput').focus(); }
-        document.getElementById('promptInput').addEventListener('input', function() { this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'; });
+
+        document.getElementById('promptInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
     </script>
 </body>
 </html>
